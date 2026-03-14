@@ -1,0 +1,43 @@
+<div class="container mt-4">
+
+<h2>Admin Dashboard</h2>
+
+<p *ngIf="loading">Loading...</p>
+<p *ngIf="error">{{error}}</p>
+
+<h3 class="mt-4">Users</h3>
+
+<table border="1" width="100%">
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+</tr>
+
+<tr *ngFor="let user of users">
+<td>{{user.id}}</td>
+<td>{{user.name}}</td>
+<td>{{user.email}}</td>
+</tr>
+
+</table>
+
+
+<h3 class="mt-4">Jobs</h3>
+
+<table border="1" width="100%">
+<tr>
+<th>ID</th>
+<th>Title</th>
+<th>Description</th>
+</tr>
+
+<tr *ngFor="let job of jobs">
+<td>{{job.id}}</td>
+<td>{{job.title}}</td>
+<td>{{job.description}}</td>
+</tr>
+
+</table>
+
+</div>

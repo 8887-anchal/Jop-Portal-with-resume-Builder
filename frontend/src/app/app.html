@@ -1,0 +1,13 @@
+<app-navbar [loggedIn]="isLoggedIn()" [role]="getRole()" (logoutClick)="logout()"></app-navbar>
+
+<div class="app-shell" [class.no-sidebar]="!isLoggedIn()">
+  <aside class="app-sidebar" *ngIf="isLoggedIn()">
+    <app-sidebar></app-sidebar>
+  </aside>
+
+  <main class="app-main">
+    <router-outlet />
+  </main>
+</div>
+
+<app-footer></app-footer>

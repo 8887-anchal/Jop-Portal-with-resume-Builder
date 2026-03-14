@@ -1,0 +1,40 @@
+<div class="card auth-card">
+  <div class="card-body">
+    <h2 class="h4 mb-3">Create your account</h2>
+    <p class="text-muted mb-4">Start building your resume in minutes.</p>
+
+    <div class="alert alert-danger" *ngIf="error">{{ error }}</div>
+
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input class="form-control" [(ngModel)]="name" placeholder="Your full name" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input class="form-control" [(ngModel)]="email" placeholder="you@email.com" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" [(ngModel)]="password" placeholder="Create a password" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Register as</label>
+      <select class="form-control" [(ngModel)]="role">
+        <option value="USER">User</option>
+        <option value="RECRUITER">Recruiter</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+    </div>
+
+    <button class="btn btn-brand w-100" (click)="register()" [disabled]="loading">
+      {{ loading ? 'Creating...' : 'Register' }}
+    </button>
+
+    <p class="mt-3 text-center">
+      Already have an account? <a routerLink="/login">Login</a>
+    </p>
+  </div>
+</div>

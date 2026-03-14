@@ -1,0 +1,257 @@
+# Job Portal System
+
+A full-stack Job Portal application built with **Spring Boot** (backend) and **Angular** (frontend), featuring JWT authentication, role-based access control, and a resume builder with PDF generation.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Java 17, Spring Boot 3.2.5 |
+| Security | Spring Security, JWT (JJWT), BCrypt |
+| Database | MySQL 8 |
+| Frontend | Angular 21 (SSR) |
+| PDF | iTextPDF 5.5 |
+| Docs | Swagger / OpenAPI 3 |
+
+---
+
+## Features
+
+### Authentication & Security
+- User registration with BCrypt password hashing
+- JWT-based login with token expiry
+- Role-based access: `USER`, `RECRUITER`, `ADMIN`
+- Protected routes via Angular auth guard + HTTP interceptor
+- Input validation on all API endpoints
+
+### APIs
+- `POST /api/v1/auth/register` — Register new user
+- `POST /api/v1/auth/login` — Login and receive JWT
+- `GET  /users/jobs/all` — Browse all job listings
+- `POST /api/jobs/post` — Post a job (RECRUITER)
+- `GET  /users/applications/user/{id}` — View my applications
+- `POST /users/applications/apply` — Apply to a job
+- `POST /resume/generate` — Generate PDF resume
+- `GET  /api/admin/users` — All users (ADMIN only)
+- `DELETE /api/admin/job/{id}` — Delete job (ADMIN only)
+
+### Frontend (Angular)
+- Register / Login pages with JWT storage
+- User dashboard with job listings
+- Application tracking
+- Resume builder with live preview + PDF download
+- Recruiter dashboard for posting and managing jobs
+- Admin dashboard for user and job management
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Java 17+
+- Node.js 18+ & npm
+- MySQL 8
+- Maven 3.8+
+
+### 1. Database Setup
+
+```sql
+CREATE DATABASE jobportal;
+USE jobportal;
+```
+
+Spring Boot will auto-create tables via Hibernate (`spring.jpa.hibernate.ddl-auto=update`).
+
+### 2. Backend Configuration
+
+Edit `src/main/resources/application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/jobportal
+spring.datasource.username=root
+spring.datasource.password=YOUR_PASSWORD
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+server.port=8082
+```
+
+### 3. Run Backend
+
+```bash
+cd demo
+mvn spring-boot:run
+```
+
+Backend runs at: `http://localhost:8082`
+
+Swagger UI: `http://localhost:8082/swagger-ui/index.html`
+
+### 4. Run Frontend
+
+```bash
+cd job-portal-ui
+npm install
+ng serve
+```
+
+Frontend runs at: `http://localhost:4200`
+
+---
+
+## API Documentation
+
+Swagger UI is available at:
+```
+http://localhost:8082/swagger-ui/index.html
+```
+
+To test protected endpoints:
+1. Call `POST /api/v1/auth/login` with your credentials
+2. Copy the `token` from the response
+3. Click **Authorize** in Swagger UI and paste: `Bearer <your_token>`
+
+---
+
+## Project Structure
+
+```
+backend (demo/)
+├── Controller/
+│   ├── AuthController.java       # Login & Register
+│   ├── userController.java       # Jobs, Applications, Resume, Notifications
+│   ├── jobController.java        # Job CRUD
+│   ├── AdminController.java      # Admin operations
+│   ├── RecruiterController.java  # Recruiter operations
+│   └── ResumeGeneratorController.java  # PDF generation
+├── Service/
+│   └── userService.java          # Business logic + BCrypt
+├── security/
+│   ├── JwtUtil.java              # Token generation & parsing
+│   ├── JwtFilter.java            # Request filter
+│   └── SecurityConfig.java       # Security chain
+├── Config/
+│   ├── CorsConfig.java
+│   └── SwaggerConfig.java
+├── entity/                       # JPA entities
+├── repository/                   # Spring Data repos
+├── dto/                          # Request/Response DTOs
+└── exception/                    # Global error handler
+
+frontend (job-portal-ui/)
+├── src/app/
+│   ├── pages/
+│   │   ├── login/
+│   │   ├── register/
+│   │   ├── dashboard/
+│   │   ├── resume-builder/
+│   │   ├── recruiter-dashboard/
+│   │   └── admin-dashboard/
+│   ├── auth/
+│   │   ├── auth.service.ts
+│   │   ├── auth.guard.ts
+│   │   └── auth.interceptor.ts
+│   └── services/
+```
+
+---
+
+## Database Schema
+
+```sql
+-- Users
+CREATE TABLE user (
+  id       BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name     VARCHAR(255),
+  email    VARCHAR(255) UNIQUE,
+  password VARCHAR(255),   -- BCrypt hashed
+  phone    VARCHAR(20),
+  role     VARCHAR(50)     -- USER | RECRUITER | ADMIN
+);
+
+-- Jobs
+CREATE TABLE job (
+  id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title       VARCHAR(255),
+  company     VARCHAR(255),
+  location    VARCHAR(255),
+  description TEXT,
+  salary      VARCHAR(100)
+);
+
+-- Applications
+CREATE TABLE application (
+  id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id      BIGINT REFERENCES user(id),
+  job_id       BIGINT REFERENCES job(id),
+  status       VARCHAR(50),
+  applied_date DATE
+);
+
+-- Resume
+CREATE TABLE resume_entity (
+  id      BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT REFERENCES user(id),
+  summary TEXT
+);
+```
+
+---
+
+## Scalability Notes
+
+### Current architecture
+Single Spring Boot monolith with MySQL — suitable for MVP and early-stage traffic.
+
+### Scaling strategy
+
+**Horizontal scaling**
+- Deploy multiple Spring Boot instances behind a load balancer (AWS ALB / Nginx)
+- JWT is stateless — no session affinity needed, all instances validate tokens independently
+
+**Database scaling**
+- Add read replicas for `GET` endpoints (job listings, applications)
+- Introduce connection pooling (HikariCP — already configured by Spring Boot)
+
+**Caching (next step)**
+- Add Redis for job listings (`GET /users/jobs/all`) — high read, low write
+- Cache JWT blacklist for logout support
+
+**Microservices (future)**
+- Split into: `auth-service`, `job-service`, `application-service`, `resume-service`
+- Use Spring Cloud Gateway as API gateway
+- Communicate via REST or Apache Kafka for async events (e.g. application submitted → email notification)
+
+**Containerization**
+```bash
+# Build Docker image
+docker build -t job-portal-api .
+
+# Run with Docker Compose
+docker-compose up
+```
+
+---
+
+## Security Practices
+
+- Passwords hashed with BCrypt (strength 10) — never stored as plain text
+- JWT tokens expire after 24 hours
+- CORS configured to allow only `localhost:4200`
+- Input validated with `@Valid` + `@NotBlank` / `@Email` annotations
+- Global exception handler returns structured error responses (no stack traces exposed)
+- SQL injection prevented via Spring Data JPA parameterized queries
+
+---
+
+## Author
+
+**Anchal Yadav**
+Junior Java Developer | Jaunpur, UP
+- Email: aymyav007@gmail.com
+- GitHub: github.com/anchal
+- LinkedIn: linkedin.com/in/anchal

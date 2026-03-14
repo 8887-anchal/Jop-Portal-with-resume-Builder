@@ -1,0 +1,77 @@
+# Integration Steps — Do These in Order
+
+## STEP 1: Add dependencies to pom.xml
+Open pom.xml and add inside <dependencies>:
+
+  <!-- Swagger -->
+  <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.3.0</version>
+  </dependency>
+
+  <!-- Validation -->
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+  </dependency>
+
+---
+
+## STEP 2: Create dto/ folder in Spring Boot
+Path: src/main/java/com/example/demo/dto/
+
+Copy these files there:
+  - RegisterRequest.java
+  - LoginRequest.java
+
+---
+
+## STEP 3: Create exception/ folder in Spring Boot
+Path: src/main/java/com/example/demo/exception/
+
+Copy this file there:
+  - GlobalExceptionHandler.java
+
+---
+
+## STEP 4: Replace existing files
+Replace these files with the new versions:
+  - userService.java        → src/main/java/com/example/demo/Service/
+  - AuthController.java     → src/main/java/com/example/demo/Controller/
+  - JwtFilter.java          → src/main/java/com/example/demo/security/
+
+Add new file:
+  - SwaggerConfig.java      → src/main/java/com/example/demo/Config/
+
+---
+
+## STEP 5: Fix existing users in MySQL
+Because passwords are now BCrypt hashed, existing plain-text
+passwords in the database won't work anymore.
+
+Option A — Delete all users and re-register:
+  DELETE FROM user;
+
+Option B — Re-register via the app with a new account.
+
+---
+
+## STEP 6: Restart Spring Boot
+  mvn spring-boot:run
+
+---
+
+## STEP 7: Test Swagger
+Open in browser:
+  http://localhost:8082/swagger-ui/index.html
+
+You should see all your endpoints documented with an Authorize button.
+
+---
+
+## STEP 8: Push README.md to GitHub
+Copy README.md to the root of your project and push:
+  git add README.md
+  git commit -m "Add project README"
+  git push

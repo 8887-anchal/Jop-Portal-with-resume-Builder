@@ -1,0 +1,96 @@
+<div class="container-fluid">
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h2 class="mb-3">Resume Builder</h2>
+
+        <div class="alert alert-info" *ngIf="message">{{ message }}</div>
+
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" [(ngModel)]="resume.name" placeholder="Your name" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input class="form-control" [(ngModel)]="resume.email" placeholder="you@email.com" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Summary</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="resume.summary" placeholder="Java Full Stack Developer"></textarea>
+        </div>
+
+        <h5 class="mt-4">Education</h5>
+        <div class="mb-3" *ngFor="let edu of resume.education; let i = index">
+          <label class="form-label">Degree</label>
+          <input class="form-control" [(ngModel)]="edu.degree" placeholder="B.Tech" />
+          <label class="form-label mt-2">Institution</label>
+          <input class="form-control" [(ngModel)]="edu.institution" placeholder="ABC University" />
+          <label class="form-label mt-2">Year</label>
+          <input class="form-control" [(ngModel)]="edu.year" placeholder="2024" />
+          <label class="form-label mt-2">Score</label>
+          <input class="form-control" [(ngModel)]="edu.score" placeholder="8.5 CGPA / 85%" />
+          <div class="d-flex gap-2 mt-2">
+            <button class="btn btn-outline-secondary" (click)="removeEducation(i)" *ngIf="resume.education.length > 1">Remove</button>
+          </div>
+        </div>
+        <button class="btn btn-outline-secondary mb-3" (click)="addEducation()">Add Education</button>
+
+        <h5 class="mt-4">Skills</h5>
+        <div class="mb-3" *ngFor="let skill of resume.skillCategories">
+          <label class="form-label">{{ skill.label }}</label>
+          <input class="form-control" [(ngModel)]="skill.value" [placeholder]="skill.placeholder" />
+        </div>
+
+        <h5 class="mt-4">Experience</h5>
+        <div class="mb-3" *ngFor="let exp of resume.experience; let i = index">
+          <label class="form-label">Role</label>
+          <input class="form-control" [(ngModel)]="exp.title" placeholder="Java Developer" />
+          <label class="form-label mt-2">Company</label>
+          <input class="form-control" [(ngModel)]="exp.company" placeholder="Infosys" />
+          <label class="form-label mt-2">Location</label>
+          <input class="form-control" [(ngModel)]="exp.location" placeholder="Bengaluru, IN" />
+          <label class="form-label mt-2">Duration</label>
+          <input class="form-control" [(ngModel)]="exp.duration" placeholder="2022 - 2024" />
+          <label class="form-label mt-2">Highlights</label>
+          <textarea class="form-control" rows="2" [(ngModel)]="exp.bullets" placeholder="Built REST APIs, optimized SQL queries"></textarea>
+          <div class="d-flex gap-2 mt-2">
+            <button class="btn btn-outline-secondary" (click)="removeExperience(i)" *ngIf="resume.experience.length > 1">Remove</button>
+          </div>
+        </div>
+        <button class="btn btn-outline-secondary mb-3" (click)="addExperience()">Add Experience</button>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-brand" (click)="saveResume()" [disabled]="saving">
+            {{ saving ? 'Saving...' : 'Save Resume' }}
+          </button>
+          <button class="btn btn-outline-secondary" (click)="generateResume()" [disabled]="loading">
+            {{ loading ? 'Generating...' : 'Generate PDF' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-4">
+        <h3 class="mb-3">Resume Preview</h3>
+        <p><strong>Name:</strong> {{ resume.name }}</p>
+        <p><strong>Email:</strong> {{ resume.email }}</p>
+        <p><strong>Summary:</strong> {{ resume.summary }}</p>
+        <div class="mb-2" *ngFor="let edu of resume.education">
+          <p><strong>Education:</strong> {{ edu.degree }} - {{ edu.institution }} ({{ edu.year }})</p>
+        </div>
+        <div class="mb-2" *ngIf="hasSkills()">
+          <p><strong>Skills:</strong></p>
+          <div *ngFor="let skill of resume.skillCategories">
+            <span *ngIf="skill.value">{{ skill.label }}: {{ skill.value }}</span>
+          </div>
+        </div>
+        <div class="mb-2" *ngFor="let exp of resume.experience">
+          <p><strong>Experience:</strong> {{ exp.title }} @ {{ exp.company }} ({{ exp.duration }})</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

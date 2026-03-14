@@ -1,0 +1,12 @@
+<nav class="navbar">
+  <a routerLink="/" class="brand">Job Portal</a>
+  <div class="nav-actions">
+    <a routerLink="/dashboard" *ngIf="loggedIn && role === 'USER'">Dashboard</a>
+    <a routerLink="/recruiter-dashboard" *ngIf="loggedIn && role === 'RECRUITER'">Recruiter</a>
+    <a routerLink="/admin-dashboard" *ngIf="loggedIn && role === 'ADMIN'">Admin</a>
+    <a routerLink="/login" *ngIf="!loggedIn">Login</a>
+    <a routerLink="/register" *ngIf="!loggedIn">Register</a>
+    <span class="role-chip" *ngIf="loggedIn && role">{{ role }}</span>
+    <button type="button" class="logout-btn" *ngIf="loggedIn" (click)="logoutClick.emit()">Logout</button>
+  </div>
+</nav>

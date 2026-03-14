@@ -1,0 +1,26 @@
+<div class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <h2 class="mb-1">Available Jobs</h2>
+      <p class="text-muted">Fresh opportunities curated for you.</p>
+    </div>
+    <span class="badge badge-sheen" *ngIf="!loading">{{ jobs.length }} roles</span>
+  </div>
+
+  <div class="alert alert-warning" *ngIf="error">{{ error }}</div>
+  <div class="alert alert-info" *ngIf="loading">Loading jobs...</div>
+
+  <div class="row g-3" *ngIf="!loading && !error">
+    <div class="col-md-6" *ngFor="let job of jobs">
+      <div class="card p-3 h-100">
+        <h5>{{ job.title }}</h5>
+        <p class="text-muted mb-2">{{ job.location }}</p>
+        <p class="mb-3">{{ job.description }}</p>
+        <div class="d-flex gap-2 align-items-center">
+          <span class="badge badge-sheen" *ngIf="job.salary">₹ {{ job.salary }}</span>
+          <a class="btn btn-outline-dark" [routerLink]="['/job-details', job.id]">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

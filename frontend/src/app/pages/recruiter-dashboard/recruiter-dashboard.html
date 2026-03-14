@@ -1,0 +1,67 @@
+<div class="container-fluid">
+  <div class="row g-4">
+    <div class="col-12">
+      <h2 class="mb-1">Recruiter Dashboard</h2>
+      <p class="text-muted">Post roles and manage your talent pipeline.</p>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card p-4">
+        <h5>Post a New Job</h5>
+
+        <div class="alert alert-info" *ngIf="message">{{ message }}</div>
+
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input class="form-control" [(ngModel)]="title" placeholder="Full Stack Developer" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="description" placeholder="Angular + Spring Boot"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Location</label>
+          <input class="form-control" [(ngModel)]="location" placeholder="Bangalore" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Salary</label>
+          <input type="number" class="form-control" [(ngModel)]="salary" placeholder="900000" />
+        </div>
+
+        <button class="btn btn-brand" (click)="postJob()" [disabled]="loading">
+          {{ loading ? 'Posting...' : 'Post Job' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card p-4 h-100">
+        <h5>Your Posted Jobs</h5>
+        <div class="alert alert-info" *ngIf="jobs.length === 0">No jobs posted yet.</div>
+        <ul class="list-group list-group-flush" *ngIf="jobs.length > 0">
+          <li class="list-group-item" *ngFor="let job of jobs">
+            <strong>{{ job.title }}</strong>
+            <div class="text-muted">{{ job.location }}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card p-4">
+        <h5>Applicants</h5>
+        <div class="alert alert-info" *ngIf="applicants.length === 0">No applicants yet.</div>
+        <ul class="list-group list-group-flush" *ngIf="applicants.length > 0">
+          <li class="list-group-item" *ngFor="let app of applicants">
+            <div><strong>Job ID:</strong> {{ app.jobId }}</div>
+            <div><strong>Job Seeker:</strong> {{ app.jobSeekerId }}</div>
+            <div><strong>Status:</strong> {{ app.status }}</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
